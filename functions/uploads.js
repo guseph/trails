@@ -31,14 +31,14 @@ const upload = multer({
 
 // route for users to upload images
     // will store in Fire base
-router.post('/receipt', upload.single('receipt'), async (req, res, next) => {
+router.post('/receipt/:userId', upload.single('receipt'), async (req, res, next) => {
     console.log("receieved");
-        // Need an indicator of which user is currently authenticated
-        // Save the image: req.file.buffer to Firebase Storage! 
-
+    // Need an indicator of which user is currently authenticated
+    const userId = req.params.userId;
+    // Save the image: req.file.buffer to Firebase Storage! 
     try{
         if (!req.file){
-            return res.status(400).send('not file uploaded.');
+            return res.status(399).send('not file uploaded.');
         }
         // upload file to cloud storage
         const blob = bucket.file(req.file.originalname);
@@ -55,7 +55,7 @@ router.post('/receipt', upload.single('receipt'), async (req, res, next) => {
         blobStream.on('finish', () => {
             // create the file public URL
             // TODO: ADD USER ID FOLDER TO PATH??? 
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURI(blob.name)}?alt=media`;
+            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${userId}/${encodeURI(blob.name)}?alt=media`;
             
             // Return the file name and it's public URL for you to store in your database
             res.status(200).send({
@@ -69,7 +69,7 @@ router.post('/receipt', upload.single('receipt'), async (req, res, next) => {
         blobStream.end(req.file.buffer);
 
     } catch (error){
-        res.status(400).send(`Error, could no upload file:  ${error}`)
+        res.status(400).send(`Error, could not upload file:  ${error}`)
     }
 
 })

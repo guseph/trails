@@ -39,6 +39,7 @@ class SignUpFormBase extends Component {
         return this.props.firebase.setDoc(FIRESTOREPATHS.USER_DOC_PATH(authUser.user.uid), {
           username,
           email,
+          id: authUser.user.uid,
         })
       })
       .then(() => {

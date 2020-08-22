@@ -36,6 +36,10 @@ class Firebase {
 
   doPasswordUpdate = password => this.auth.currentUser.updatePassword(password)
 
+  getCurrentUser = () => this.auth.currentUser
+
+  getCurrentUserId = () => this.auth.currentUser.uid
+
   // DATABASE
   docRef = path => {
     if (!path) return undefined
