@@ -1,10 +1,18 @@
 import React from 'react';
 
+import { AuthUserContext, withAuthorization } from './Session';
+
 const RecentView = () => {
 
     return (
-        <div>Recent View Here</div>
+        <AuthUserContext.Consumer>
+            {authUser => (
+                <div>Recent View Here</div>
+            )}
+        </AuthUserContext.Consumer>
     )
 }
 
-export default RecentView;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(RecentView);

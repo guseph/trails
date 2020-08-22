@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { AuthUserContext, withAuthorization } from './Session';
 import "./AddReceipt.css";
 
 const AddReceipt = () => {
@@ -41,16 +42,22 @@ const AddReceipt = () => {
     }
     
     return (
-        <div>
-            <h1>Add Receipt</h1>
-            <h3>Select Receipt</h3>
-            <form id = "file-form" className = "ui form" onSubmit = {(e) => onFileUpload(e)}>
-                <input className = "field" type = 'file' onChange={onFileSelected} />
-                <button id = "upload-btn" type = 'submit' className = "ui button">Upload Receipt</button>
-            </form>            
+        <AuthUserContext.Consumer>
+        {authUser => (
+            <div>
+                <h1>Add Receipt</h1>
+                <h3>Select Receipt</h3>
+                <form id = "file-form" className = "ui form" onSubmit = {(e) => onFileUpload(e)}>
+                    <input className = "field" type = 'file' onChange={onFileSelected} />
+                    <button id = "upload-btn" type = 'submit' className = "ui button">Upload Receipt</button>
+                </form>            
 
-        </div>
+            </div>
+        )}
+      </AuthUserContext.Consumer>
     )
 }
 
-export default AddReceipt;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(AddReceipt);
