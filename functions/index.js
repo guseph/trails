@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const uploads = require('./uploads.js');
+const vision = require('./vision.js');
 
 require('dotenv').config({path: './.env'})
 
@@ -19,6 +20,9 @@ admin.initializeApp({
   databaseURL: "https://trails-bb944.firebaseio.com"
 });
 const db = admin.firestore();
+
+// test vision
+vision("asdfsa");
 
 app.get('/hello-world', (req, res) => {
   return res.status(200).send('Hello World!');

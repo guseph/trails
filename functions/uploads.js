@@ -38,7 +38,7 @@ router.post('/receipt', upload.single('receipt'), async (req, res, next) => {
 
     try{
         if (!req.file){
-            return res.status(400).send('not file uploaded.');
+            return res.status(400).send('no file uploaded.');
         }
         // upload file to cloud storage
         const blob = bucket.file(req.file.originalname);
