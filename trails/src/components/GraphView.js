@@ -1,10 +1,18 @@
 import React from 'react';
 
+import { AuthUserContext, withAuthorization } from './Session';
+
 const GraphView = () => {
 
     return (
-        <div>Graph View</div>
+        <AuthUserContext.Consumer>
+            {authUser => (
+                <div>Graph View</div>
+            )}
+        </AuthUserContext.Consumer>
     )
 }
 
-export default GraphView;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(GraphView);

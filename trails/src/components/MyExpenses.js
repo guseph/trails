@@ -4,6 +4,8 @@ import GraphView from "./GraphView";
 import RecentView from "./RecentView";
 import './MyExpenses.css';
 
+import { AuthUserContext, withAuthorization } from './Session';
+
 const MyExpenses = () => {
     const [view, setView] = useState("recent");
 
@@ -22,18 +24,24 @@ const MyExpenses = () => {
 
 
     return (
-        <div>
-            <div className="ui buttons">
-                <button className = "large ui button" onClick={() => setView("graph")}>Graph</button>
-                <button className = "large ui button" onClick={() => setView("recent")}>Recent</button>
-                <button className = "large ui button" onClick={() => setView("month")}>Month</button>
-            </div>
-            <div className = "ui container" id = "view-panel">
-                {currentView()}
-            </div>
+        <AuthUserContext.Consumer>
+            {authUser => (
+                <div>
+                    <div className="ui buttons">
+                        <button className = "large ui button" onClick={() => setView("graph")}>Graph</button>
+                        <button className = "large ui button" onClick={() => setView("recent")}>Recent</button>
+                        <button className = "large ui button" onClick={() => setView("month")}>Month</button>
+                    </div>
+                    <div className = "ui container" id = "view-panel">
+                        {currentView()}
+                    </div>
 
-        </div>
+                </div>
+            )}
+        </AuthUserContext.Consumer>
     )
 }
 
-export default MyExpenses;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(MyExpenses);

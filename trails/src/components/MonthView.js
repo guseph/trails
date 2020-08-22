@@ -1,12 +1,20 @@
 import React from 'react';
 
+import { AuthUserContext, withAuthorization } from './Session';
+
 const MonthView = () => {
 
     return (
-        <div>
-            Month View here
-        </div>
+        <AuthUserContext.Consumer>
+            {authUser => (
+                <div>
+                    Month View here
+                </div>
+            )}
+        </AuthUserContext.Consumer>
     )
 }
 
-export default MonthView;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(MonthView);

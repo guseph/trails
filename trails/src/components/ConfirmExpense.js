@@ -1,9 +1,17 @@
 import React from 'react';
 
+import { AuthUserContext, withAuthorization } from './Session';
+
 const ConfirmExpense = () => {
     return(
-        <div>Confirm Expense here</div>
+        <AuthUserContext.Consumer>
+            {authUser => (
+                <div>Confirm Expense here</div>
+            )}
+        </AuthUserContext.Consumer>
     )
 }
 
-export default ConfirmExpense;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(ConfirmExpense);
