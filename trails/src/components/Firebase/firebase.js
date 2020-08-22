@@ -4,7 +4,7 @@ import 'firebase/database'
 import 'firebase/functions'
 import 'firebase/storage'
 import 'firebase/analytics'
-import 'firebase/firestore' // added to KC's version bc there was an error
+import 'firebase/firestore'
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,

@@ -8,7 +8,6 @@ import SignInPage from '../SignIn';
 import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
-import AdminPage from '../Admin';
 import MyExpenses from '../MyExpenses';
 import AddReceipt from '../AddReceipt';
 
@@ -31,10 +30,8 @@ const App = () => (
       />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-      <Route path={ROUTES.ADMIN} component={AdminPage} />
       <Route path={ROUTES.MY_EXPENSES} component={MyExpenses} />
       <Route path={ROUTES.ADD_RECEIPT} component={AddReceipt} />
-
     </div>
   </Router>
 );
