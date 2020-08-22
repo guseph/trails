@@ -38,7 +38,7 @@ router.post('/receipt/:userId', upload.single('receipt'), async (req, res, next)
     // Save the image: req.file.buffer to Firebase Storage! 
     try{
         if (!req.file){
-            return res.status(399).send('not file uploaded.');
+            return res.status(400).send('no file uploaded.');
         }
         // upload file to cloud storage
         const blob = bucket.file(req.file.originalname);
