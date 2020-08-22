@@ -80,7 +80,7 @@ class SignInFormBase extends Component {
         </div>
 
 
-        <button class="ui button" disabled={isInvalid} type="submit">
+        <button className="ui button" disabled={isInvalid} type="submit">
           Sign In
         </button>
 

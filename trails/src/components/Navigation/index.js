@@ -21,7 +21,7 @@ const NavigationAuth = () => (
   <div>
     <div class="ui top fixed menu">
       <Link class="item" to={ROUTES.LANDING}>
-        <img src={logoSrc} />
+        <img alt = "logo" src={logoSrc} />
       </Link>
 
       <Link class="item" to={ROUTES.HOME}>Home</Link>
@@ -39,9 +39,9 @@ const NavigationAuth = () => (
 
 const NavigationNonAuth = () => (
   <div>
-    <div class="ui top fixed menu">
-      <Link class="item" to={ROUTES.LANDING}>
-        <img src={logoSrc} />
+    <div className="ui top fixed menu">
+      <Link className="item" to={ROUTES.LANDING}>
+        <img alt = "logo" src={logoSrc} />
       </Link>
       <Link className="item right floated" to={ROUTES.SIGN_IN}>Sign In</Link>
 
