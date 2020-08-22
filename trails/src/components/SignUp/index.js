@@ -4,6 +4,7 @@ import { compose } from 'recompose';
 
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import * as FIRESTOREPATHS from '../../constants/firestorePaths'
 
 import "./SignUp.css";
 
@@ -35,6 +36,12 @@ class SignUpFormBase extends Component {
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
+        return this.props.firebase.setDoc(FIRESTOREPATHS.USER_DOC_PATH(authUser.user.uid), {
+          username,
+          email,
+        })
+      })
+      .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.HOME);
       })

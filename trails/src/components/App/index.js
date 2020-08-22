@@ -8,7 +8,7 @@ import SignInPage from '../SignIn';
 import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
-import AdminPage from '../Admin';
+// import AdminPage from '../Admin';
 import MyExpenses from '../MyExpenses';
 import AddReceipt from '../AddReceipt';
 
@@ -22,7 +22,7 @@ const App = () => (
       <Navigation />
 
       <hr />
-      <div id = "main" className="ui center aligned container">
+      <div id = "main" className= "ui center aligned container">
         <Route exact path={ROUTES.LANDING} component={LandingPage} />
         <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
         <Route path={ROUTES.SIGN_IN} component={SignInPage} />
@@ -32,7 +32,7 @@ const App = () => (
         />
         <Route path={ROUTES.HOME} component={HomePage} />
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-        <Route path={ROUTES.ADMIN} component={AdminPage} />
+        {/* <Route path={ROUTES.ADMIN} component={AdminPage} /> */}
         <Route path={ROUTES.MY_EXPENSES} component={MyExpenses} />
         <Route path={ROUTES.ADD_RECEIPT} component={AddReceipt} />
       </div>
