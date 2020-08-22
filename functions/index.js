@@ -9,7 +9,7 @@ app.use(cors({ origin: true }));
 var serviceAccount = require("./permissions.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://fir-api-9a206..firebaseio.com"
+  databaseURL: "https://trails-bb944.firebaseio.com"
 });
 const db = admin.firestore();
 
@@ -30,6 +30,71 @@ app.post('/api/create', (req, res) => {
     }
   })();
 });
+
+// get all receipts
+app.get('/api/:userId/receipts', (req, res) => {
+  (async () => {
+    try {
+      const colPath = db.collection('users').doc(req.params.userId).collection('receipts');
+      let response = [];
+      await colPath.get()
+        .then(snapshot => {
+          const docs = snapshot.docs || []
+          response = docs.map(doc => ({
+            id: doc.id,
+            ...(doc.data() || {})
+          }))
+        })
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+// get a specific receipt
+app.get('/api/:userId/receipts/:receiptId', (req, res) => {
+  (async () => {
+    try {
+      const docPath = db.collection('users').doc(req.params.userId).collection('receipts').doc(req.params.receiptId)
+      const doc = await docPath.get();
+      const response = doc.data() || {};
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+// update a receipt, whether it exists or not
+app.put('/api/:userId/receipts/:receiptId', (req, res) => {
+  (async () => {
+    try {
+      const docPath = db.collection('users').doc(req.params.userId).collection('receipts').doc(req.params.receiptId);
+      await docPath.set(req.body, { merge: true });
+      return res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+// delete a receipt
+app.delete('/api/:userId/receipts/:receiptId', (req, res) => {
+  (async () => {
+    try {
+      const docPath = db.collection('users').doc(req.params.userId).collection('receipts').doc(req.params.receiptId);
+      await docPath.delete();
+      return res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
 
 exports.app = functions.https.onRequest(app);
 // Can add this setting if we want express to automatically convert response data into a JSON
