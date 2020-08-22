@@ -1,20 +1,21 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import MonthView from "./MonthView";
 import GraphView from "./GraphView";
 import RecentView from "./RecentView";
+import './MyExpenses.css';
 
 const MyExpenses = () => {
     const [view, setView] = useState("recent");
 
     // render correct view 
     const currentView = () => {
-        if(view === "recent"){
+        if (view === "recent") {
             return <RecentView />
         }
-        else if (view === "graph"){
+        else if (view === "graph") {
             return <GraphView />
         }
-        else{
+        else {
             return <MonthView />
         }
     }
@@ -22,11 +23,15 @@ const MyExpenses = () => {
 
     return (
         <div>
-            <button onClick = {() => setView("recent")}>Recent</button>
-            <button onClick = {() => setView("graph")}>Graph</button>
-            <button onClick = {() => setView("month")}>Month</button>
+            <div className="ui buttons">
+                <button className = "large ui button" onClick={() => setView("graph")}>Graph</button>
+                <button className = "large ui button" onClick={() => setView("recent")}>Recent</button>
+                <button className = "large ui button" onClick={() => setView("month")}>Month</button>
+            </div>
+            <div className = "ui container" id = "view-panel">
+                {currentView()}
+            </div>
 
-            {currentView()}
         </div>
     )
 }
