@@ -4,7 +4,14 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const uploads = require('./uploads.js');
+
+require('dotenv').config({path: './.env'})
+
 app.use(cors({ origin: true }));
+
+// connect other routers
+app.use('/uploads', uploads) // to call these routes, you prepend /uploads to use that file's router
 
 var serviceAccount = require("./permissions.json");
 admin.initializeApp({
