@@ -12,7 +12,7 @@
     ]
   },
   "hosting": {
-    "site": "trails-app",
+    "site": "trails-dev",
     "public": "trails/public",
     "ignore": [
       "firebase.json",
