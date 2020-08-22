@@ -10,6 +10,7 @@ import HomePage from '../Home';
 import AccountPage from '../Account';
 import AdminPage from '../Admin';
 import MyExpenses from '../MyExpenses';
+import AddReceipt from '../AddReceipt';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
@@ -32,6 +33,8 @@ const App = () => (
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ADMIN} component={AdminPage} />
       <Route path={ROUTES.MY_EXPENSES} component={MyExpenses} />
+      <Route path={ROUTES.ADD_RECEIPT} component={AddReceipt} />
+
     </div>
   </Router>
 );

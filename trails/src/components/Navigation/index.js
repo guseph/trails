@@ -30,6 +30,9 @@ const NavigationAuth = () => (
       <Link to={ROUTES.MY_EXPENSES}>MY EXPENSES</Link>
     </li>
     <li>
+      <Link to={ROUTES.ADD_RECEIPT}>Add Receipt</Link>
+    </li>
+    <li>
       <SignOutButton />
     </li>
   </ul>
