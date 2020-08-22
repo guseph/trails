@@ -14,23 +14,28 @@ const AddReceipt = () => {
     }
 
     const onFileUpload = async (e) => {
-        // e.preventDefault();
-        // try{
-        //     if (selectedFile !== ''){
-        //         let fileData = new FormData();
-        //         // add timestamp to upload in case user uploads same image multiple times
-        //         fileData.set('receipt', selectedFile, `${Date.now()}-${selectedFile.name}`);
-        //         await axios({
-        //             method: 'post', 
-        //             url: "", // upload route URL
-        //             data: fileData,
-        //             headers: {'Content-Type': 'multipart/form-data'}
-        //         });
-        //     }
+        e.preventDefault();
+        try{
+            if (selectedFile !== ''){
+                let fileData = new FormData();
+                // add timestamp to upload in case user uploads same image multiple times
+                fileData.set('receipt', selectedFile, `${Date.now()}-${selectedFile.name}`);
+                const url = await axios({
+                    method: 'post', 
+                    url: "", // upload route URL
+                    data: fileData,
+                    headers: {'Content-Type': 'multipart/form-data'}
+                });
+
+                // create a receipt document
+                    // fields be url returned 
+            }
+
+        
            
-        // } catch (error){
-        //     console.log(`error: ${error}`)
-        // }
+        } catch (error){
+            console.log(`error: ${error}`)
+        }
        console.log("file upload yee!");
         
     }
