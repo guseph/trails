@@ -9,6 +9,7 @@ const Receipt = (props) => {
     const [tax, setTax] = useState(null);
     const [total, setTotal] = useState(null);
     const [receiptDate, setReceiptDate] = useState(null);
+    const [deleteReceipt, setDeleteReceipt] = useState(false);
 
   const getDateObject = () => {
     if (props.receipt.receiptDate) return new Date(props.receipt.receiptDate * 1000);
@@ -43,6 +44,7 @@ const Receipt = (props) => {
   const back = async () => {
     // reset state
     setConfirm(false);
+    setDeleteReceipt(false);
     setTotal(null);
     setReceiptDate(null);
     setTax(null);
@@ -94,14 +96,31 @@ const Receipt = (props) => {
         receiptDate,
         tax
     });
-    console.log(props.receipt.id);
     props.onReceiptRefresh();
     setConfirm(false);
+    setDeleteReceipt(false);
 }
 
   const openEdit = () => {
     setConfirm(true);
   }
+  
+  const openDelete = () => {
+    setDeleteReceipt(true);
+  }
+
+  const deleteReceiptProcess = async () => {
+    await props.firebase.deleteDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUserId(), props.receipt.id));
+    props.onReceiptRefresh();
+  }
+
+  const deleteReceiptForm = (
+    <div>
+      <h2>Delete this receipt?</h2>
+      <button className="ui button" onClick={back}>NO</button>
+      <button className="ui red button" onClick={deleteReceiptProcess}>YES</button>
+    </div>
+  )
 
     const regularReceipt = (
       <div>
@@ -118,7 +137,10 @@ const Receipt = (props) => {
       </div>
       <div className="extra content">
         <span className="right floated">
-          <button className="ui button" onClick={openEdit}>Edit Receipt</button>
+          <button className="ui red button" onClick={openDelete}>Delete</button>
+        </span>
+        <span className="right floated">
+          <button className="ui button" onClick={openEdit}>Edit</button>
         </span>
         <span>
           {(getDateObject() === null ? '??/??/????' : `${getDateObject().getMonth() + 1}/${getDateObject().getDate()}/${getDateObject().getFullYear()}`)}
@@ -128,7 +150,7 @@ const Receipt = (props) => {
     )
     return (
       <div className="card">
-        {confirm ? confirmForm : regularReceipt}
+        {confirm ? confirmForm : ( deleteReceipt ? deleteReceiptForm : regularReceipt)}
       </div>
     )
 }
