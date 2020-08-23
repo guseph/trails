@@ -6,10 +6,7 @@ import MonthData from './MonthData'
 
 const MonthView = (props) => {
     const [loading, setLoading] = useState(false);
-    const [tax, setTax] = useState(null);
-    const [total, setTotal] = useState(null);
-    const [receiptDate, setReceiptDate] = useState(null);
-    const [oldestReceipt, setOldestReceipt] = useState(null);
+    // const [oldestReceipt, setOldestReceipt] = useState(null);
     const [months, setMonths] = useState(null)
 
     useEffect(() => {
@@ -68,7 +65,7 @@ const MonthView = (props) => {
             {authUser => (
                 <div>
                     <h2>Your Last 6 Months</h2>
-                    {generatedMonths()}
+                    {loading ? <h3>LOADING...</h3> : generatedMonths()}
                 </div>
             )}
         </AuthUserContext.Consumer>

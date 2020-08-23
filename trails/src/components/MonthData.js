@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 
-import { AuthUserContext, withAuthorization } from './Session';
-import * as FIRESTOREPATHS from '../constants/firestorePaths'
+import { withAuthorization } from './Session';
 
 const MonthData = (props) => {
-  const [confirm, setConfirm] = useState(false);
-    const [tax, setTax] = useState(null);
-    const [total, setTotal] = useState(null);
-    const [receiptDate, setReceiptDate] = useState(null);
-    const [deleteReceipt, setDeleteReceipt] = useState(false);
-
   const monthName = () => {
     switch (props.month.currentMonth) {
       case 0: return 'January'

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import 'tui-chart/dist/tui-chart.css'
 import { BarChart } from '@toast-ui/react-chart'
 
-import { AuthUserContext, withAuthorization } from './Session';
+import { withAuthorization } from './Session';
 
 const MonthBarGraph = (props) => {
     const [loading, setLoading] = useState(true);

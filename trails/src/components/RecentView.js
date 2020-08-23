@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-import { AuthUserContext, withAuthorization } from './Session';
+import { withAuthorization } from './Session';
 import Receipt from './Receipt';
-
-import * as FIRESTOREPATHS from '../constants/firestorePaths'
 
 const RecentView = (props) => {
     const [loading, setLoading] = useState(true);

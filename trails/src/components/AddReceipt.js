@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { AuthUserContext, withAuthorization } from './Session';
-import ConfirmExpense from "./ConfirmExpense";
 import "./AddReceipt.css";
 
 
