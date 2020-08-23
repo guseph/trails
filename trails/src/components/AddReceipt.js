@@ -21,32 +21,17 @@ const AddReceipt = (props) => {
         try{
             if (selectedFile !== ''){
                 let fileData = new FormData();
-                // add timestamp to upload in case user uploads same image multiple times
-                // fileData.set('receipt', selectedFile, `${Date.now()}-${selectedFile.name}`);
                 fileData.append('receipt', selectedFile);
-                console.log(selectedFile)
-                // console.log(fileData);
-                // console.log(selectedFile);
                 const res = await axios({
                     method: 'post',
                     url: `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${props.firebase.getCurrentUser().uid}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
                     data: fileData,
                     headers: {'Content-Type': 'multipart/form-data'}
                 });
-                // const url = await axios.post(
-                //     `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${props.firebase.getCurrentUser().uid}`,
-                //     fileData,
-                //     {
-                //         headers: {'Content-Type': 'multipart/form-data'}
-                //     }
-                // )
-
-                // create a receipt document
-                    // fields be url returned 
-                console.log(res)
                 await props.firebase.addDoc(FIRESTOREPATHS.USER_RECEIPTS_COL_PATH(props.firebase.getCurrentUser().uid), {
                     receiptPhotoUrl: res.data.fileUrl,
                     receiptUploadDate: Date.now(),
+                    gsStorageUrl: res.data.gsStorageUrl
                 })
             }
         } catch (error){

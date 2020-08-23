@@ -47,7 +47,6 @@ router.post('/receipt/:userId/:photoName', async (req, res) => {
         // Thus, any files in it must fit in the instance's memory.
         console.log(`Processed file ${filename}`);
         const filepath = path.join(tmpdir, filename);
-        console.log('filepath:', filepath)
         uploads[fieldname] = filepath;
         const writeStream = fs.createWriteStream(filepath);
         file.pipe(writeStream);
@@ -66,15 +65,10 @@ router.post('/receipt/:userId/:photoName', async (req, res) => {
     // We still need to wait for the disk writes (saves) to complete.
     busboy.on('finish', () => {
     Promise.all(fileWrites).then(() => {
-        // TODO(developer): Process saved files here
-        console.log('asfd')
         for (const name in uploads) {
             const file = uploads[name];
-            console.log(file)
             let data = fs.readFileSync(uploads[name]);
             const filetoGCF = bucket.file(`${userId}/${photoName}`);
-            console.log('//')
-            console.log(filetoGCF)
             filetoGCF.save(data)
                 .then(success => {
                     res.json({
@@ -82,7 +76,8 @@ router.post('/receipt/:userId/:photoName', async (req, res) => {
                         created_at: new Date().getTime(),
                         filename: `${photoName}`,
                         filePath: `${userId}/${photoName}`,
-                        fileUrl: `https://firebasestorage.googleapis.com/v0/b/trails-bb944.appspot.com/o/${userId}%2F${photoName}?alt=media`
+                        fileUrl: `https://firebasestorage.googleapis.com/v0/b/trails-bb944.appspot.com/o/${userId}%2F${photoName}?alt=media`,
+                        gsStorageUrl: `gs://trails-bb944.appspot.com/${userId}/${photoName}`
                     });
                 })
             fs.unlinkSync(file);
