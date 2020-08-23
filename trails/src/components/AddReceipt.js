@@ -46,10 +46,9 @@ const AddReceipt = (props) => {
                     receiptUploadDate: Date.now(),
                     gsUrl: uploadReceiptRes.data.gsUrl
                 });
-                setLoading(false);
-
+                
                 setReceiptDocId(receiptDoc.id);
-
+                
                 // pass gsUrl to Vision API
                 const receiptProperties = await axios({
                     method: 'post',
@@ -61,8 +60,9 @@ const AddReceipt = (props) => {
 
                 setReceiptDate(receiptProperties.data.receiptDate);
                 setTotal(receiptProperties.data.total);
-
+                
                 setConfirm(true);
+                setLoading(false);
             }
         } catch (error) {
             console.log(`error: ${error}`)
@@ -120,7 +120,7 @@ const AddReceipt = (props) => {
                         <div className = "inline fields">
                             <label>Total</label>
                             <div className="field">
-                                <input type="number" name="total" value={total} onChange={(e) => setTotal(e.target.value)}></input>
+                                <input type="number" name="total" value={total} onChange={(e) => setTotal(parseFloat(e.target.value))}></input>
                             </div>
                         </div>
                     </div>
@@ -166,8 +166,7 @@ const AddReceipt = (props) => {
         <AuthUserContext.Consumer>
             {authUser => (
                 <div>
-                    {/* {confirm ? confirmForm : uploadForm} */}
-                    {confirmForm}
+                    {confirm ? confirmForm : uploadForm}
                     {loading && spinner}
                 </div>
             )}
