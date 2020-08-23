@@ -82,12 +82,8 @@ class Firebase {
     return ref.onSnapshot(options, callback)
   }
   watchCol = (path, queryAdditions = (q => q), callback, options = {includeMetadataChanges: false}) => {
-    const ref = this.docRef(path)
-    if (!ref) return undefined
-
     return queryAdditions(this.db.collection(path)).onSnapshot(options, callback)
   }
-  runTransaction = (...args) => this.db.runTransaction(...args)
 }
 
 export default Firebase

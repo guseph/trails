@@ -37,10 +37,10 @@ app.post('/tester', (req, res) => {
 })
 
 // get all receipts
-app.get('/api/:userId/receipts', (req, res) => {
+app.get('/api/:userId/userReceipts', (req, res) => {
   (async () => {
     try {
-      const colPath = db.collection('users').doc(req.params.userId).collection('receipts');
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
       let response = [];
       await colPath.get()
         .then(snapshot => {
