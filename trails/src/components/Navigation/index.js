@@ -19,15 +19,15 @@ const logoSrc = "https://thumbs.dreamstime.com/b/money-cash-logo-vector-green-91
 
 const NavigationAuth = () => (
   <div>
-    <div class="ui top fixed menu">
-      <Link class="item" to={ROUTES.LANDING}>
+    <div className="ui top fixed menu">
+      <Link className="item" to={ROUTES.LANDING}>
         <img alt = "logo" src={logoSrc} />
       </Link>
 
-      <Link class="item" to={ROUTES.HOME}>Home</Link>
-      <Link class="item" to={ROUTES.MY_EXPENSES}>Expenses</Link>
-      <Link class="item" to={ROUTES.ADD_RECEIPT}>Add Receipt</Link>
-      <Link class="item" to={ROUTES.ACCOUNT}>Account</Link>
+      <Link className="item" to={ROUTES.HOME}>Home</Link>
+      <Link className="item" to={ROUTES.MY_EXPENSES}>Expenses</Link>
+      <Link className="item" to={ROUTES.ADD_RECEIPT}>Add Receipt</Link>
+      <Link className="item" to={ROUTES.ACCOUNT}>Account</Link>
      
       <SignOutButton />
 
