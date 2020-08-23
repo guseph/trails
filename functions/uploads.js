@@ -79,9 +79,16 @@ router.post('/receipt/:userId/:photoName', async (req, res) => {
                         fileUrl: `https://firebasestorage.googleapis.com/v0/b/trails-bb944.appspot.com/o/${userId}%2F${photoName}?alt=media`,
                         gsUrl: `gs://trails-bb944.appspot.com/${userId}/${photoName}`
                     });
+                    return null;
+                }).catch((err) => {
+                    res.json({
+                        uploaded: false,
+                        error: err,
+                    })
                 })
             fs.unlinkSync(file);
         }
+        return null;
     }).catch((err)=>{
         res.json({
             uploaded: false,

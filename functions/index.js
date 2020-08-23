@@ -44,12 +44,14 @@ app.get('/api/:userId/receipts', (req, res) => {
       let response = [];
       await colPath.get()
         .then(snapshot => {
-          const docs = snapshot.docs || []
-          response = docs.map(doc => ({
-            id: doc.id,
-            ...(doc.data() || {})
-          }))
-        })
+          const docs = snapshot.docs || [];
+          response = docs.map(doc => {
+            const docData = doc.data() || {};
+            docData.id = doc.id;
+            return docData;
+          })
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
       return res.status(200).send(response);
     } catch (error) {
       console.log(error);
