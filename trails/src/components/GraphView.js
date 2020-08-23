@@ -1,23 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import 'tui-chart/dist/tui-chart.css'
 import {PieChart} from '@toast-ui/react-chart'
 import MonthBarGraph from "./MonthBarGraph";
 
 import { AuthUserContext, withAuthorization } from './Session';
 
-const GraphView = () => {
+const GraphView = (props) => {
+    const [loading, setLoading] = useState(true);
+    const [yearStats, setYearStats] = useState({});
+    const [currentYear, setCurrentYear] = useState(2020);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const yearStatsRes = await axios({
+                method: 'get',
+                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/yearStats`, // upload route URL
+            });
+            setYearStats(yearStatsRes.data);
+            setLoading(false);
+        }
+        fetchData();
+    }, []);
     // move this to separate component later
     const barDataTotalTax = {
         categories: ["money"], 
         series: [
             {
                 name: "Total", 
-                data: 19.99
+                data: yearStats[0]
             }, 
             {
                 name: "Tax", 
-                data: 3.00
+                data: yearStats[1]
             }
         ]
     }
@@ -37,8 +52,8 @@ const GraphView = () => {
         <AuthUserContext.Consumer>
             {authUser => (
                 <div>
-                    <h1>Graph View</h1>
-                    <PieChart data = {barDataTotalTax} options = {options}/>
+                    <h1>2020 Graphs</h1>
+                    {loading ? <h3>LOADING...</h3> : <PieChart data = {barDataTotalTax} options = {options}/>}
                     <MonthBarGraph />
                 </div>
             )}

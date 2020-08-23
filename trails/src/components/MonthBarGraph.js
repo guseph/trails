@@ -1,14 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import 'tui-chart/dist/tui-chart.css'
 import { BarChart } from '@toast-ui/react-chart'
 
-const MonthBarGraph = () => {
-    const data = {
+import { AuthUserContext, withAuthorization } from './Session';
+
+const MonthBarGraph = (props) => {
+    const [loading, setLoading] = useState(true);
+    const [monthlySpendings, setMonthlySpendings] = useState({});
+    const [currentYear, setCurrentYear] = useState(2020);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const monthlySpendingsRes = await axios({
+                method: 'get',
+                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
+            });
+            setMonthlySpendings(monthlySpendingsRes.data);
+            setLoading(false);
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const monthlySpendingsRes = await axios({
+                method: 'get',
+                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
+            });
+            setMonthlySpendings(monthlySpendingsRes.data);
+            setLoading(false);
+        }
+        fetchData();
+    }, [currentYear]);
+
+    let data = {
         categories: ['Jan', 'Feb', 'March', "April", "May", 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         series: [
             {
                 name: 'Expenses',
-                data: [5000, 3000, 5000, 7000, 6000, 4000]
+                data: monthlySpendings,
             }
         ]
     }
@@ -26,7 +57,7 @@ const MonthBarGraph = () => {
         xAxis: {
             title: 'Amount',
             min: 0,
-            max: 9000,
+            max: Math.max.apply(null, monthlySpendings) + 200,
             suffix: '$'
         },
         series: {
@@ -36,8 +67,12 @@ const MonthBarGraph = () => {
 
 
     return (
-        <BarChart data = {data} options = {options} />
+        <div>
+            {loading ? <h3>LOADING...</h3> : <BarChart data = {data} options = {options} />}
+        </div>
     )
 }
 
-export default MonthBarGraph;
+const condition = authUser => !!authUser;
+
+export default withAuthorization(condition)(MonthBarGraph);

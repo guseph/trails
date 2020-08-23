@@ -36,7 +36,7 @@ app.post('/tester', (req, res) => {
   })();
 })
 
-// get all receipts
+// get all receipts, from most recent to oldest
 app.get('/api/:userId/userReceipts', (req, res) => {
   (async () => {
     try {
@@ -60,8 +60,8 @@ app.get('/api/:userId/userReceipts', (req, res) => {
   })();
 })
 
-// get all receipts
-app.get('/api/:userId/userReceipts/byMonth', (req, res) => {
+// get all receipts in an object of months since Epoch
+app.get('/api/:userId/userReceipts/byMonths', (req, res) => {
   (async () => {
     try {
       const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
@@ -86,11 +86,117 @@ app.get('/api/:userId/userReceipts/byMonth', (req, res) => {
   })();
 })
 
+// get all receipts with year param
+app.get('/api/:userId/userReceipts/:year', (req, res) => {
+  (async () => {
+    try {
+      const startDate = new Date(req.params.year, 0);
+      const endDate = new Date(req.params.year, 11);
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
+      let response = {};
+      await colPath.where('receiptDate', '>=', startDate.getTime()/1000).where('receiptDate', '<=', endDate.getTime()/1000).get()
+        .then(snapshot => {
+          const docs = snapshot.docs || [];
+          docs.forEach(doc => {
+            const docData = doc.data() || {};
+            docData.id = doc.id;
+            const monthNumber = new Date(docData.receiptDate * 1000).getMonth(); // 0-indexed
+            console.log('log')
+            console.log(new Date(docData.receiptDate))
+            console.log(monthNumber)
+            docData.monthNumber = monthNumber;
+            if (!response[monthNumber]) response[monthNumber] = [];
+            response[monthNumber].push(docData);
+          })
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
 const getMonthNumber = (unixSeconds) => {
   const milliseconds = unixSeconds * 1000;
   const adjustedUTCTime = new Date(milliseconds - 1000 * 60 * 60 * 8);
   return (adjustedUTCTime.getUTCFullYear() - 1970) * 12 + adjustedUTCTime.getUTCMonth();
 }
+
+// get an array of total spendings per month for a year
+app.get('/api/:userId/userReceipts/:year/monthlySpendings', (req, res) => {
+  (async () => {
+    try {
+      const startDate = new Date(req.params.year, 0);
+      const endDate = new Date(req.params.year, 11);
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
+      let response = [0,0,0,0,0,0,0,0,0,0,0,0];
+      await colPath.where('receiptDate', '>=', startDate.getTime()/1000).where('receiptDate', '<=', endDate.getTime()/1000).get()
+        .then(snapshot => {
+          const docs = snapshot.docs || [];
+          docs.forEach(doc => {
+            const docData = doc.data() || {};
+            const monthNumber = new Date(docData.receiptDate * 1000).getMonth(); // 0-indexed
+            response[monthNumber] += docData.total;
+          })
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+// get total spendings and tax for the year
+app.get('/api/:userId/userReceipts/:year/yearStats', (req, res) => {
+  (async () => {
+    try {
+      const startDate = new Date(req.params.year, 0);
+      const endDate = new Date(req.params.year, 11);
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
+      let response = [0,0]; // [0] is total, [1] is tax
+      await colPath.where('receiptDate', '>=', startDate.getTime()/1000).where('receiptDate', '<=', endDate.getTime()/1000).get()
+        .then(snapshot => {
+          const docs = snapshot.docs || [];
+          docs.forEach(doc => {
+            const docData = doc.data() || {};
+            response[0] += docData.total || 0;
+            response[1] += docData.tax || 0;
+          })
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+// get oldest receipt doc
+app.get('/api/:userId/userReceipts/oldestReceipt', (req, res) => {
+  (async () => {
+    try {
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
+      let response = {};
+      await colPath.orderBy('receiptDate', 'asc').limit(1).get()
+        .then(snapshot => {
+          const doc = (snapshot.docs || [])[0];
+          const docData = doc.data() || {};
+          docData.id = doc.id;
+          response = docData
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
 
 // get a specific receipt
 app.get('/api/:userId/receipts/:receiptId', (req, res) => {

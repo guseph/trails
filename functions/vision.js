@@ -31,19 +31,8 @@ const parseReceipt = async (imgStorageUrl) => {
             parsedData["receiptDate"] = null;
         }
 
-        // const receiptTime = getReceiptTime(detections);
-        // parsedData["receiptTime"] = receiptTime;
-
         const tax = await getTax(detections);
         parsedData["tax"] = tax;
-
-        // const discountSales;
-
-        // const phoneNumber;
-
-        // const address;
-
-        // const totalItemsSold;
 
         // can add parsing for individual items later, or the location etc. 
 
@@ -94,7 +83,6 @@ const getTotal = (data) => {
         return null;
     }
     const total = findPriceMatches(prices, totalLocation);
-    console.log(total);
 
     return total;
 }
@@ -113,8 +101,6 @@ const findPriceMatches = (prices, location) => {
             matches.push(price);
         }
     })
-    // console.log("matches");
-    // console.log(matches);
 
     // can add something later, if there is more than one match! 
     if (matches.length === 0){
@@ -142,8 +128,6 @@ const getReceiptDate = (data) => {
             dates.push(potentialMatches.slice(1,4));
         }
     })
-
-    console.log(dates)
 
     return dates[0];
 }
