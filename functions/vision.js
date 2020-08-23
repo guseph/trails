@@ -175,7 +175,7 @@ const getTax = (data) => {
 
     // Find the price on the row with the total
     if (taxLocation.length === 0 || prices.length === 0) {
-        return null;
+        return 0;
     }
     const tax = findPriceMatches(prices, taxLocation);
     return tax;
