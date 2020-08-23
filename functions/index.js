@@ -7,7 +7,7 @@ const app = express();
 const uploads = require('./uploads.js');
 const vision = require('./vision.js');
 
-require('dotenv').config({path: './.env'})
+require('dotenv').config({ path: './.env' })
 
 app.use(cors({ origin: true }));
 
@@ -22,18 +22,31 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // test vision
-vision("asdfsa");
+//console.log(vision("asdfsa"))
 
 app.get('/hello-world', (req, res) => {
   return res.status(200).send('Hello World!');
 });
+
+// use this route to get json result of the vision api and parsing an image! 
+app.get('/tester', (req, res) => {
+  (async () => {
+
+    try {
+      const result = await vision("gs://trails-bb944.appspot.com/6.jpg")
+      return res.status(200).send(result)
+    } catch (e) {
+      return res.status(500).send(e)
+    }
+  })();
+})
 
 // create
 app.post('/api/create', (req, res) => {
   (async () => {
     try {
       await db.collection('items').doc('/' + req.body.id + '/')
-        .create({item: req.body.item});
+        .create({ item: req.body.item });
       return res.status(200).send();
     } catch (error) {
       console.log(error);
@@ -122,5 +135,5 @@ exports.app = functions.https.onRequest(app);
 // Start express server
 const port = process.env.PORT || 5000; // default if 5000, might have to set env PORT somewhere
 app.listen(port, () => {
-    console.log(`Server is up and running on port: ${port}`)
+  console.log(`Server is up and running on port: ${port}`)
 })
