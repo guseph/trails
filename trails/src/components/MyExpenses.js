@@ -7,7 +7,7 @@ import './MyExpenses.css';
 import { AuthUserContext, withAuthorization } from './Session';
 
 const MyExpenses = () => {
-    const [view, setView] = useState("recent");
+    const [view, setView] = useState("graph");
 
     // render correct view 
     const currentView = () => {
