@@ -34,7 +34,6 @@ const Receipt = (props) => {
   }
 
   const inputValToUnix = (val) => {
-      console.log(val);
       var b = val.split(/\D/);
       let date =  new Date(b[0], --b[1], b[2]);
       const unixSeconds = date.getTime() / 1000;

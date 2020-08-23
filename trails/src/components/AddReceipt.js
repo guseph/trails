@@ -72,14 +72,12 @@ const AddReceipt = (props) => {
 
     // save expense data to firebase
     const addExpense = async () => {
-        console.log("added expense");
         await props.firebase.setDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUser().uid, receiptDocId), {
             total,
             tax,
             receiptDate
         });
         setConfirm(false);
-        alert('succ');
     }
 
     const back = async () => {
@@ -106,7 +104,6 @@ const AddReceipt = (props) => {
     }
 
     const inputValToUnix = (val) => {
-        console.log(val);
         var b = val.split(/\D/);
         let date =  new Date(b[0], --b[1], b[2]);
         const unixSeconds = date.getTime() / 1000;

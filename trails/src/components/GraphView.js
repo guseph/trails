@@ -54,6 +54,11 @@ const GraphView = (props) => {
             suffix: '%'
         }
     }
+    const spinner = (
+        <div className="ui active inverted dimmer">
+            <div className="ui text loader">Loading</div>
+        </div>
+    )
 
     return (
         <AuthUserContext.Consumer>
@@ -62,6 +67,7 @@ const GraphView = (props) => {
                     <h1>2020 Graphs</h1>
                     {loading ? <h3>LOADING...</h3> : <PieChart data = {barDataTotalTax} options = {options}/>}
                     {loading ? <h3>LOADING...</h3> : <MonthBarGraph monthlySpendings={monthlySpendings} />}
+                    {loading && spinner}
                 </div>
             )}
         </AuthUserContext.Consumer>

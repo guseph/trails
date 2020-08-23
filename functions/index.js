@@ -182,7 +182,6 @@ app.get('/api/:userId/userReceipts/oldestReceipt', (req, res) => {
           response = docData
           return null;
         }).catch(err => console.log('getAllReceipts:', err))
-        console.log(response)
       return res.status(200).send(response);
     } catch (error) {
       console.log(error);

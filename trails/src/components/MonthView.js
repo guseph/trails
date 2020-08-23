@@ -5,7 +5,7 @@ import { AuthUserContext, withAuthorization } from './Session';
 import MonthData from './MonthData'
 
 const MonthView = (props) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     // const [oldestReceipt, setOldestReceipt] = useState(null);
     const [months, setMonths] = useState(null)
 
@@ -59,6 +59,11 @@ const MonthView = (props) => {
             return (<h2>No months!</h2>);
         }
     }
+    const spinner = (
+        <div className="ui active inverted dimmer">
+            <div className="ui text loader">Loading</div>
+        </div>
+    )
 
     return (
         <AuthUserContext.Consumer>
@@ -66,6 +71,7 @@ const MonthView = (props) => {
                 <div>
                     <h2>Your Last 6 Months</h2>
                     {loading ? <h3>LOADING...</h3> : generatedMonths()}
+                    {loading && spinner}
                 </div>
             )}
         </AuthUserContext.Consumer>
