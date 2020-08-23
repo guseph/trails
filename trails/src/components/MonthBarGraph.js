@@ -7,16 +7,16 @@ import { AuthUserContext, withAuthorization } from './Session';
 
 const MonthBarGraph = (props) => {
     const [loading, setLoading] = useState(true);
-    const [monthlySpendings, setMonthlySpendings] = useState({});
+    // const [monthlySpendings, setMonthlySpendings] = useState({});
     const [currentYear, setCurrentYear] = useState(2020);
 
     useEffect(() => {
         const fetchData = async () => {
-            const monthlySpendingsRes = await axios({
-                method: 'get',
-                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
-            });
-            setMonthlySpendings(monthlySpendingsRes.data);
+            // const monthlySpendingsRes = await axios({
+            //     method: 'get',
+            //     url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
+            // });
+            // setMonthlySpendings(monthlySpendingsRes.data);
             setLoading(false);
         }
         fetchData();
@@ -24,11 +24,11 @@ const MonthBarGraph = (props) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const monthlySpendingsRes = await axios({
-                method: 'get',
-                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
-            });
-            setMonthlySpendings(monthlySpendingsRes.data);
+            // const monthlySpendingsRes = await axios({
+            //     method: 'get',
+            //     url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
+            // });
+            // setMonthlySpendings(monthlySpendingsRes.data);
             setLoading(false);
         }
         fetchData();
@@ -39,7 +39,7 @@ const MonthBarGraph = (props) => {
         series: [
             {
                 name: 'Expenses',
-                data: monthlySpendings,
+                data: props.monthlySpendings,
             }
         ]
     }
@@ -57,7 +57,7 @@ const MonthBarGraph = (props) => {
         xAxis: {
             title: 'Amount',
             min: 0,
-            max: Math.max.apply(null, monthlySpendings) + 200,
+            max: Math.max.apply(null, props.monthlySpendings) + 200,
             suffix: '$'
         },
         series: {

@@ -28,10 +28,20 @@ const RecentView = (props) => {
         fetchData();
       }, []);
 
+    const refreshReceipts = async () => {
+        setLoading(true);
+        const getAllReceiptsRes = await axios({
+            method: 'get',
+            url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts`, // upload route URL
+        });
+        setUserReceipts(getAllReceiptsRes.data);
+        setLoading(false);
+    }
+
     const receipts = () => {
         if (userReceipts && userReceipts.length !== 0) {
             return userReceipts.map((receipt) => {
-                return (<Receipt receipt={receipt} />);
+                return (<Receipt receipt={receipt} key={receipt.id} onReceiptRefresh={refreshReceipts}/>);
             })
         } else {
             return (<h2>No receipts!</h2>);
@@ -45,14 +55,10 @@ const RecentView = (props) => {
     )
 
     return (
-        <AuthUserContext.Consumer>
-            {authUser => (
-                <div className="ui cards">
-                    {loading ? loadingView : receipts() }
-                    {loading && spinner}
-                </div>
-            )}
-        </AuthUserContext.Consumer>
+        <div className="ui cards">
+            {loading ? loadingView : receipts() }
+            {loading && spinner}
+        </div>
     )
 }
 

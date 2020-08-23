@@ -9,6 +9,7 @@ import { AuthUserContext, withAuthorization } from './Session';
 const GraphView = (props) => {
     const [loading, setLoading] = useState(true);
     const [yearStats, setYearStats] = useState({});
+    const [monthlySpendings, setMonthlySpendings] = useState({});
     const [currentYear, setCurrentYear] = useState(2020);
 
     useEffect(() => {
@@ -18,6 +19,12 @@ const GraphView = (props) => {
                 url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/yearStats`, // upload route URL
             });
             setYearStats(yearStatsRes.data);
+
+            const monthlySpendingsRes = await axios({
+                method: 'get',
+                url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/monthlySpendings`, // upload route URL
+            });
+            setMonthlySpendings(monthlySpendingsRes.data);
             setLoading(false);
         }
         fetchData();
@@ -54,7 +61,7 @@ const GraphView = (props) => {
                 <div>
                     <h1>2020 Graphs</h1>
                     {loading ? <h3>LOADING...</h3> : <PieChart data = {barDataTotalTax} options = {options}/>}
-                    <MonthBarGraph />
+                    {loading ? <h3>LOADING...</h3> : <MonthBarGraph monthlySpendings={monthlySpendings} />}
                 </div>
             )}
         </AuthUserContext.Consumer>

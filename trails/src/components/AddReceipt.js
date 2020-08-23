@@ -76,6 +76,7 @@ const AddReceipt = (props) => {
         console.log("added expense");
         await props.firebase.setDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUser().uid, receiptDocId), {
             total,
+            tax,
             receiptDate
         });
         setConfirm(false);
@@ -87,6 +88,7 @@ const AddReceipt = (props) => {
         setConfirm(false);
         setTotal(null);
         setReceiptDate(null);
+        setTax(null);
         await props.firebase.deleteDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUser().uid, receiptDocId))
         setReceiptDocId(null);
     }
@@ -130,7 +132,7 @@ const AddReceipt = (props) => {
                         <div className = "inline fields">
                             <label>Tax</label>
                             <div className="field">
-                                <input type="number"  name="tax" value={tax} onChange={(e) => setTax(parseFloat(e.target.value))}></input>
+                                <input type="number"  name="tax" value={tax || 0} onChange={(e) => setTax(parseFloat(e.target.value))}></input>
                             </div>
                         </div>
                     </div>
@@ -138,7 +140,7 @@ const AddReceipt = (props) => {
                         <div className = "inline fields">
                             <label>Total</label>
                             <div className="field">
-                            <input type="number" name="total" value={total} onChange={(e) => setTotal(parseFloat(e.target.value))}></input>
+                            <input type="number" name="total" value={total || 0} onChange={(e) => setTotal(parseFloat(e.target.value))}></input>
                             </div>
                         </div>
                     </div>
