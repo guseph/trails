@@ -4,8 +4,8 @@ import { withAuthorization } from '../Session';
 
 const HomePage = () => (
   <div>
-    <h1>Home Page</h1>
-    <p>The Home Page is accessible by every signed in user.</p>
+    <h1>Receipt Trail</h1>
+    <p>The new home for all your receipts.</p>
   </div>
 );
 
