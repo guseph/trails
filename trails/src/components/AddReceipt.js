@@ -9,6 +9,7 @@ import * as FIRESTOREPATHS from '../constants/firestorePaths'
 
 const AddReceipt = (props) => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [loading, setLoading] = useState(false);
     // const [fileName, setFileName] = useState(null);
     const [confirm, setConfirm] = useState(false);
     const [total, setTotal] = useState(null);
@@ -31,6 +32,7 @@ const AddReceipt = (props) => {
 
                 let fileData = new FormData();
                 fileData.append('receipt', selectedFile);
+                setLoading(true)
                 const uploadReceiptRes = await axios({
                     method: 'post',
                     url: `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${userId}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
@@ -44,6 +46,7 @@ const AddReceipt = (props) => {
                     receiptUploadDate: Date.now(),
                     gsUrl: uploadReceiptRes.data.gsUrl
                 });
+                setLoading(false);
 
                 setReceiptDocId(receiptDoc.id);
 
@@ -56,18 +59,17 @@ const AddReceipt = (props) => {
                     }
                 });
 
-                
                 setReceiptDate(receiptProperties.data.receiptDate);
                 setTotal(receiptProperties.data.total);
-                
+
                 setConfirm(true);
             }
         } catch (error) {
             console.log(`error: ${error}`)
         }
-        
+
     }
-    
+
     // save expense data to firebase
     const addExpense = async () => {
         console.log("added expense");
@@ -94,8 +96,8 @@ const AddReceipt = (props) => {
             <hr />
             <h4>Total: {total}</h4>
             <h4>Date: {new Date(receiptDate * 1000).toDateString()}</h4>
-            <button className = "ui button green" onClick = {() => addExpense()}>Confirm Expense</button>
-            <button className = "ui button red" onClick = {back}>Back</button>
+            <button className="ui button green" onClick={() => addExpense()}>Confirm Expense</button>
+            <button className="ui button red" onClick={back}>Back</button>
         </div>
     )
 
@@ -109,11 +111,18 @@ const AddReceipt = (props) => {
         </div>
     )
 
+    const spinner = (
+            <div class="ui active inverted dimmer">
+                <div class="ui text loader">Loading</div>
+            </div>
+    )
+
     return (
         <AuthUserContext.Consumer>
             {authUser => (
                 <div>
-                    {confirm? confirmForm : uploadForm}
+                    {confirm ? confirmForm : uploadForm}
+                    {loading && spinner}
                 </div>
             )}
         </AuthUserContext.Consumer>
