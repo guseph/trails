@@ -92,10 +92,10 @@ const getTotal = (data) => {
 
     // Find the price on the row with the total
     if (totalLocation.length === 0 || prices.length === 0) {
-        return NaN
+        return null;
     }
-    const total = findPriceMatches(prices, totalLocation)
-    console.log(total)
+    const total = findPriceMatches(prices, totalLocation);
+    console.log(total);
 
     return total;
 }
@@ -104,11 +104,11 @@ const getTotal = (data) => {
 const findPriceMatches = (prices, totalLocation) => {
     // estimate y coordinates of the row with the total
     const offset = 50; // because row coordinates may vary (can change this)
-    let rowBot = totalLocation[0]["botY"] + offset
-    let rowTop = totalLocation[0]["topY"] - offset
+    let rowBot = totalLocation[0]["botY"] + offset;
+    let rowTop = totalLocation[0]["topY"] - offset;
 
     // find price(s) in that row!
-    let matches = []
+    let matches = [];
     prices.forEach((price) => {
         if (price.topY > rowTop && price.botY < rowBot){
             matches.push(price);
@@ -119,7 +119,7 @@ const findPriceMatches = (prices, totalLocation) => {
 
     // can add something later, if there is more than one match! 
     if (matches.length === 0){
-        return null
+        return null;
     }
 
     let match = matches[0].text;
