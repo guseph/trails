@@ -114,7 +114,7 @@ const AddReceipt = (props) => {
         <div>
             <h1>Generated Expense Report</h1>
             <hr />
-            <form id = "confirm-form" class="ui form">
+            <form id = "confirm-form" className="ui form">
                     <div className = "row">
                         <div className = "inline fields">
                             <label>Date</label>
@@ -161,8 +161,8 @@ const AddReceipt = (props) => {
     )
 
     const spinner = (
-        <div class="ui active inverted dimmer">
-            <div class="ui text loader">Loading</div>
+        <div className="ui active inverted dimmer">
+            <div className="ui text loader">Loading</div>
         </div>
     )
 

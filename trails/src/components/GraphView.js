@@ -66,6 +66,7 @@ const GraphView = (props) => {
                 <div>
                     <h1>2020 Graphs</h1>
                     {loading ? <h3>LOADING...</h3> : <PieChart data = {barDataTotalTax} options = {options}/>}
+                    <div style={{ "height": "40px" }}></div>
                     {loading ? <h3>LOADING...</h3> : <MonthBarGraph monthlySpendings={monthlySpendings} />}
                     {loading && spinner}
                 </div>

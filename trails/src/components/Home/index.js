@@ -4,8 +4,8 @@ import { withAuthorization } from '../Session';
 
 const HomePage = () => (
   <div>
-    <h1>Receipt Trail</h1>
-    <p>The new home for all your receipts.</p>
+    <h1 style={{ "fontSize": "64px" }}>Receipt Trail</h1>
+    <p style={{ "fontSize": "42px" }}>The new home for all your receipts.</p>
   </div>
 );
 

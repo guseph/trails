@@ -15,7 +15,7 @@ const Navigation = () => (
   </div>
 );
 
-const logoSrc = "https://thumbs.dreamstime.com/b/money-cash-logo-vector-green-91037524.jpg";
+const logoSrc = "https://img.freepik.com/free-vector/a4-paper-mockup_1017-7639.jpg?size=338&ext=jpg";
 
 const NavigationAuth = () => (
   <div>
