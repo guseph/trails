@@ -7,7 +7,6 @@ const client = new vision.ImageAnnotatorClient({credentials});
 
 // Given link to firebase storage, get data from vision API and parse
 const parseReceipt = async (imgStorageUrl) => {
-    console.log(imgStorageUrl)
     try{
         if(!imgStorageUrl){
             throw new Error("No image url given");

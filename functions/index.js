@@ -24,36 +24,17 @@ const db = admin.firestore();
 // test vision
 //console.log(vision("asdfsa"))
 
-app.get('/hello-world', (req, res) => {
-  return res.status(200).send('Hello World!');
-});
-
 // use this route to get json result of the vision api and parsing an image! 
-app.get('/tester', (req, res) => {
+app.post('/tester', (req, res) => {
   (async () => {
-
     try {
-      const result = await vision("gs://trails-bb944.appspot.com/6.jpg")
+      const result = await vision(req.body.gsUrl)
       return res.status(200).send(result)
     } catch (e) {
       return res.status(500).send(e)
     }
   })();
 })
-
-// create
-app.post('/api/create', (req, res) => {
-  (async () => {
-    try {
-      await db.collection('items').doc('/' + req.body.id + '/')
-        .create({ item: req.body.item });
-      return res.status(200).send();
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
 
 // get all receipts
 app.get('/api/:userId/receipts', (req, res) => {

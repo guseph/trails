@@ -20,19 +20,34 @@ const AddReceipt = (props) => {
         e.preventDefault();
         try{
             if (selectedFile !== ''){
+                const userId = props.firebase.getCurrentUser().uid;
+
                 let fileData = new FormData();
                 fileData.append('receipt', selectedFile);
-                const res = await axios({
+                const uploadReceiptRes = await axios({
                     method: 'post',
-                    url: `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${props.firebase.getCurrentUser().uid}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
+                    url: `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${userId}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
                     data: fileData,
                     headers: {'Content-Type': 'multipart/form-data'}
                 });
-                await props.firebase.addDoc(FIRESTOREPATHS.USER_RECEIPTS_COL_PATH(props.firebase.getCurrentUser().uid), {
-                    receiptPhotoUrl: res.data.fileUrl,
+
+                // add receipt doc in Firestore
+                const receiptDoc = await props.firebase.addDoc(FIRESTOREPATHS.USER_RECEIPTS_COL_PATH(userId), {
+                    receiptPhotoUrl: uploadReceiptRes.data.fileUrl,
                     receiptUploadDate: Date.now(),
-                    gsStorageUrl: res.data.gsStorageUrl
-                })
+                    gsUrl: uploadReceiptRes.data.gsUrl
+                });
+
+                // pass gsUrl to Vision API
+                const receiptProperties = await axios({
+                    method: 'post',
+                    url: `http://localhost:5001/trails-bb944/us-central1/app/tester`,
+                    data: {
+                        gsUrl: uploadReceiptRes.data.gsUrl,
+                    }
+                });
+
+                await props.firebase.setDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(userId, receiptDoc.id), receiptProperties.data);
             }
         } catch (error){
             console.log(`error: ${error}`)
