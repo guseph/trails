@@ -21,18 +21,36 @@ const parseReceipt = async (imgStorageUrl) => {
         let parsedData = {}
         
         // use vision data to get pieces
-        const total = getTotal(detections)
-        parsedData["total"] = total;
+        const total = await getTotal(detections);
+        if (total !== NaN) parsedData["total"] = total;
+
+        const receiptDate = await getReceiptDate(detections);
+        if (receiptDate) parsedData["receiptDate"] = receiptDate;
+
+        // const receiptTime = getReceiptTime(detections);
+        // parsedData["receiptTime"] = receiptTime;
+
+        // const tax;
+
+        // const discountSales;
+
+        // const phoneNumber;
+
+        // const address;
+
+        // const totalItemsSold;
 
         // can add parsing for individual items later, or the location etc. 
 
 
         // just return total for now 
+        console.log(parsedData);
         return parsedData;
 
 
     } catch (e) {
-        return e
+        console.log(e);
+        return e;
     }
 }
 
@@ -46,12 +64,12 @@ const getTotal = (data) => {
 
     // Keywords that indicate totals! 
     // Can add more to this! 
-    const keywords = ["Due", "Total", "BALANCE", "total"]
+    const keywords = ["due", "total", "balance", "amount", "order", "purchase"]
 
     // filter out possible prices and "total" keywords
     // stores in arrays as {text: value, topy: coord1, boty: coord2} object! 
     data.forEach((text) => {
-        const description = text.description; 
+        const description = text.description.toLowerCase(); 
         if (isNumber(description) || description[0] === "$"){
             const topY = text["boundingPoly"]["vertices"][0]["y"] 
             const botY = text["boundingPoly"]["vertices"][3]["y"] 
@@ -66,7 +84,10 @@ const getTotal = (data) => {
     // console.log("Prices" + prices)
     // console.log("target:" + totalLocation)
 
-    // Find the price on the row with the total 
+    // Find the price on the row with the total
+    if (totalLocation.length === 0 || prices.length === 0) {
+        return NaN
+    }
     const total = findPriceMatches(prices, totalLocation)
     console.log(total)
 
@@ -77,8 +98,8 @@ const getTotal = (data) => {
 const findPriceMatches = (prices, totalLocation) => {
     // estimate y coordinates of the row with the total
     const offset = 50; // because row coordinates may vary (can change this)
-    let rowTop = totalLocation[0].topY - offset
     let rowBot = totalLocation[0]["botY"] + offset
+    let rowTop = totalLocation[0]["topY"] - offset
 
     // find price(s) in that row!
     let matches = []
@@ -101,6 +122,25 @@ const findPriceMatches = (prices, totalLocation) => {
         match = match.substring(1);
     }
     return parseFloat(match);
+}
+
+function isNumberDate(n) { return n.match(/^(1[0-2]|0?[1-9])\/(3[01]|[12][0-9]|0?[1-9])\/(\d{4}|\d{2})$/); }
+
+const getReceiptDate = (data) => {
+    var dates = [] // all potential dates 
+
+    // filter out possible dates
+    data.forEach((text) => {
+        const description = text.description;
+        const potentialMatches = isNumberDate(description);
+        if (potentialMatches !== null){
+            dates.push(potentialMatches.slice(1,4));
+        }
+    })
+
+    console.log(dates)
+
+    return dates[0];
 }
 
 
