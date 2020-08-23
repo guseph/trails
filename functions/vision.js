@@ -15,8 +15,6 @@ const parseReceipt = async (imgStorageUrl) => {
         // make request to vision API
         const [result] = await client.textDetection(imgStorageUrl);
         const detections = result.textAnnotations;
-        // console.log('Text:');
-        //console.log(detections[0]["description"])
 
         let parsedData = {}
         
@@ -36,7 +34,8 @@ const parseReceipt = async (imgStorageUrl) => {
         // const receiptTime = getReceiptTime(detections);
         // parsedData["receiptTime"] = receiptTime;
 
-        // const tax;
+        const tax = await getTax(detections);
+        parsedData["tax"] = tax;
 
         // const discountSales;
 
@@ -101,11 +100,11 @@ const getTotal = (data) => {
 }
 
 // find the associated price (float)
-const findPriceMatches = (prices, totalLocation) => {
+const findPriceMatches = (prices, location) => {
     // estimate y coordinates of the row with the total
     const offset = 50; // because row coordinates may vary (can change this)
-    let rowBot = totalLocation[0]["botY"] + offset;
-    let rowTop = totalLocation[0]["topY"] - offset;
+    let rowBot = location[0]["botY"] + offset;
+    let rowTop = location[0]["topY"] - offset;
 
     // find price(s) in that row!
     let matches = [];
@@ -147,6 +146,39 @@ const getReceiptDate = (data) => {
     console.log(dates)
 
     return dates[0];
+}
+
+const getTax = (data) => {
+    //var data = require('./test.json');
+    var prices = [] // all numbers 
+    var taxLocation = [] // possible coordinates of rows where the total could be
+
+    // Keywords that indicate totals! 
+    // Can add more to this! 
+    const keyword = "tax";
+
+    // filter out possible prices and "total" keywords
+    // stores in arrays as {text: value, topy: coord1, boty: coord2} object! 
+    data.forEach((text) => {
+        const description = text.description.toLowerCase(); 
+        if (isNumber(description) || description[0] === "$"){
+            const topY = text["boundingPoly"]["vertices"][0]["y"] 
+            const botY = text["boundingPoly"]["vertices"][3]["y"] 
+            prices.push({"text":description, "topY": topY, "botY": botY})
+        }
+        else if (description === keyword){
+            const topY = text["boundingPoly"]["vertices"][0]["y"] 
+            const botY = text["boundingPoly"]["vertices"][3]["y"] 
+            taxLocation.push({"text":description, "topY": topY, "botY": botY})
+        }
+    })
+
+    // Find the price on the row with the total
+    if (taxLocation.length === 0 || prices.length === 0) {
+        return null;
+    }
+    const tax = findPriceMatches(prices, taxLocation);
+    return tax;
 }
 
 

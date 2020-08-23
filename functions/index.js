@@ -22,7 +22,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // test vision
-//console.log(vision("asdfsa"))
+console.log(vision("gs://trails-bb944.appspot.com/YDqKgLOAOWPMwFvMtfUCnUcIZyA2/1598166653852-2test.jpg"))
 
 // use this route to get json result of the vision api and parsing an image! 
 app.post('/tester', (req, res) => {

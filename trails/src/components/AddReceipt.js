@@ -11,6 +11,7 @@ const AddReceipt = (props) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
     // const [fileName, setFileName] = useState(null);
+    const [tax, setTax] = useState(null);
     const [confirm, setConfirm] = useState(false);
     const [total, setTotal] = useState(null);
     const [receiptDate, setReceiptDate] = useState(null);
@@ -118,14 +119,6 @@ const AddReceipt = (props) => {
             <form id = "confirm-form" class="ui form">
                     <div className = "row">
                         <div className = "inline fields">
-                            <label>Total</label>
-                            <div className="field">
-                                <input type="number" name="total" value={total} onChange={(e) => setTotal(parseFloat(e.target.value))}></input>
-                            </div>
-                        </div>
-                    </div>
-                    <div className = "row">
-                        <div className = "inline fields">
                             <label>Date</label>
                             <div className="field">
                                 <input type="date" name="date" value={unixToInputVal(receiptDate)} onChange={(e) => setReceiptDate(inputValToUnix(e.target.value))}></input>
@@ -133,14 +126,27 @@ const AddReceipt = (props) => {
                         </div>
 
                     </div>
+                    <div className = "row">
+                        <div className = "inline fields">
+                            <label>Tax</label>
+                            <div className="field">
+                                <input type="number"  name="tax" value={tax} onChange={(e) => setTax(parseFloat(e.target.value))}></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div className = "row">
+                        <div className = "inline fields">
+                            <label>Total</label>
+                            <div className="field">
+                            <input type="number" name="total" value={total} onChange={(e) => setTotal(parseFloat(e.target.value))}></input>
+                            </div>
+                        </div>
+                    </div>
                 
 
 
             </form>
     
-            {/* <input type = "text" value = {total} onChange = {(e) => setTotal(e.target.value)}></input> */}
-            {/* <h4>Total: {total}</h4> */}
-            {/* <h4>Date: {new Date(receiptDate * 1000).toDateString()}</h4> */}
             <button className="ui button green" onClick={() => addExpense()}>Confirm Expense</button>
             <button className="ui button red" onClick={back}>Back</button>
         </div>
