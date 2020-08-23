@@ -42,7 +42,7 @@ app.get('/api/:userId/userReceipts', (req, res) => {
     try {
       const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
       let response = [];
-      await colPath.get()
+      await colPath.orderBy('receiptDate', 'desc').get()
         .then(snapshot => {
           const docs = snapshot.docs || [];
           response = docs.map(doc => {
