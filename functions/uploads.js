@@ -1,10 +1,14 @@
 // set up router
-const multer = require('multer')
 const express = require('express');
 const router = express.Router();
 require('dotenv').config({path: './.env'})
 
 const {Storage} = require('@google-cloud/storage');
+
+const Busboy = require('busboy');
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 // set up Storage instance with credentials
 const storage = new Storage({
@@ -15,63 +19,83 @@ const storage = new Storage({
 // create a bucket
 const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET_URL)
 
-// multer instance
-// allows us to access the uploaded file sent over in the body
-// use memory storage engine provided by Multer so we can make a Buffer obj
-    // by adding this, req.file will contain a field called buffer which contains the entire file
-const upload = multer({
-    storage: multer.memoryStorage(), 
-    fileFilter(req, file, cb){
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-            return cb(new Error("Please upload a jpg, jpeg, or png file"))
-        }
-        cb(undefined, true);
-    }
-})
-
 // route for users to upload images
     // will store in Fire base
-router.post('/receipt/:userId', upload.single('receipt'), async (req, res, next) => {
-    console.log("receieved");
-    // Need an indicator of which user is currently authenticated
+router.post('/receipt/:userId/:photoName', async (req, res) => {
     const userId = req.params.userId;
-    // Save the image: req.file.buffer to Firebase Storage! 
-    try{
-        if (!req.file){
-            return res.status(400).send('no file uploaded.');
-        }
-        // upload file to cloud storage
-        const blob = bucket.file(req.file.originalname);
-        // create a writable stream that we can check for events
-        const blobStream = blob.createWriteStream({
-            metadata: {
-                contentType: req.file.mimetype, 
-            }
-        });
-        // handle error
-        blobStream.on('error', (err) => next(err));
+    const photoName = req.params.photoName;
 
-        // on success
-        blobStream.on('finish', () => {
-            // create the file public URL
-            // TODO: ADD USER ID FOLDER TO PATH??? 
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${userId}/${encodeURI(blob.name)}?alt=media`;
-            
-            // Return the file name and it's public URL for you to store in your database
-            res.status(200).send({
-                fileName: req.file.originalname, 
-                fileLocation: publicUrl
+    const busboy = new Busboy({
+        headers: req.headers
+    });
+    const tmpdir = os.tmpdir();
+
+    // This object will accumulate all the fields, keyed by their name
+    const fields = {};
+    // This object will accumulate all the uploaded files, keyed by their name.
+    const uploads = {};
+    // This code will process each non-file field in the form.
+    busboy.on('field', (fieldname, val) => {
+    // TODO(developer): Process submitted field values here
+        console.log(`Processed field ${fieldname}: ${val}.`);
+        fields[fieldname] = val;
+    });
+    const fileWrites = [];
+    // This code will process each file uploaded.
+    busboy.on('file', (fieldname, file, filename) => {
+        // Note: os.tmpdir() points to an in-memory file system on GCF
+        // Thus, any files in it must fit in the instance's memory.
+        console.log(`Processed file ${filename}`);
+        const filepath = path.join(tmpdir, filename);
+        console.log('filepath:', filepath)
+        uploads[fieldname] = filepath;
+        const writeStream = fs.createWriteStream(filepath);
+        file.pipe(writeStream);
+        // File was processed by Busboy; wait for it to be written to disk.
+        const promise = new Promise((resolve, reject) => {
+            file.on('end', () => {
+                writeStream.end();
             });
-        
-        })
+            writeStream.on('finish', resolve);
+            writeStream.on('error', reject);
+        });
+        fileWrites.push(promise);
+    });
 
-        // Handle when no more data to be confused
-        blobStream.end(req.file.buffer);
+    // Triggered once all uploaded files are processed by Busboy.
+    // We still need to wait for the disk writes (saves) to complete.
+    busboy.on('finish', () => {
+    Promise.all(fileWrites).then(() => {
+        // TODO(developer): Process saved files here
+        console.log('asfd')
+        for (const name in uploads) {
+            const file = uploads[name];
+            console.log(file)
+            let data = fs.readFileSync(uploads[name]);
+            const filetoGCF = bucket.file(`${userId}/${photoName}`);
+            console.log('//')
+            console.log(filetoGCF)
+            filetoGCF.save(data)
+                .then(success => {
+                    res.json({
+                        uploaded: true,
+                        created_at: new Date().getTime(),
+                        filename: `${photoName}`,
+                        filePath: `${userId}/${photoName}`,
+                        fileUrl: `https://firebasestorage.googleapis.com/v0/b/trails-bb944.appspot.com/o/${userId}%2F${photoName}?alt=media`
+                    });
+                })
+            fs.unlinkSync(file);
+        }
+    }).catch((err)=>{
+        res.json({
+            uploaded: false,
+            error: err,
+        });
+    });
+    });
 
-    } catch (error){
-        res.status(400).send(`Error, could not upload file:  ${error}`)
-    }
-
+    busboy.end(req.rawBody);
 })
 
 module.exports = router;
