@@ -60,6 +60,38 @@ app.get('/api/:userId/userReceipts', (req, res) => {
   })();
 })
 
+// get all receipts
+app.get('/api/:userId/userReceipts/byMonth', (req, res) => {
+  (async () => {
+    try {
+      const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
+      let response = {};
+      await colPath.orderBy('receiptDate', 'desc').get()
+        .then(snapshot => {
+          const docs = snapshot.docs || [];
+          docs.forEach(doc => {
+            const docData = doc.data() || {};
+            const monthNumber = getMonthNumber(docData.receiptDate);
+            docData.id = doc.id;
+            if (!response[monthNumber]) response[monthNumber] = []
+            response[monthNumber].push(docData)
+          })
+          return null;
+        }).catch(err => console.log('getAllReceipts:', err))
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+})
+
+const getMonthNumber = (unixSeconds) => {
+  const milliseconds = unixSeconds * 1000;
+  const adjustedUTCTime = new Date(milliseconds - 1000 * 60 * 60 * 8);
+  return (adjustedUTCTime.getUTCFullYear() - 1970) * 12 + adjustedUTCTime.getUTCMonth();
+}
+
 // get a specific receipt
 app.get('/api/:userId/receipts/:receiptId', (req, res) => {
   (async () => {
