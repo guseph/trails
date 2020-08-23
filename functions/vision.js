@@ -22,13 +22,15 @@ const parseReceipt = async (imgStorageUrl) => {
         
         // use vision data to get pieces
         const total = await getTotal(detections);
-        if (!isNaN(total)) parsedData["total"] = total;
+        parsedData["total"] = total;
 
         const receiptDate = await getReceiptDate(detections);
         if (receiptDate) {
             const unixDate = new Date(parseInt(( receiptDate[2].length === 2 ? '20' + receiptDate[2] : receiptDate[2] ), 10), parseInt(receiptDate[0], 10) - 1, parseInt(receiptDate[1], 10));
             const unixSeconds = unixDate.getTime() / 1000;
             parsedData["receiptDate"] = unixSeconds;
+        } else {
+            parsedData["receiptDate"] = null;
         }
 
         // const receiptTime = getReceiptTime(detections);

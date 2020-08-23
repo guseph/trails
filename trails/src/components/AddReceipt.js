@@ -12,7 +12,8 @@ const AddReceipt = (props) => {
     // const [fileName, setFileName] = useState(null);
     const [confirm, setConfirm] = useState(false);
     const [total, setTotal] = useState(null);
-    const [date, setDate] = useState(null);
+    const [receiptDate, setReceiptDate] = useState(null);
+    const [receiptDocId, setReceiptDocId] = useState(null);
 
     const onFileSelected = (e) => {
         if (e.target.files[0]) {
@@ -32,7 +33,7 @@ const AddReceipt = (props) => {
                 fileData.append('receipt', selectedFile);
                 const uploadReceiptRes = await axios({
                     method: 'post',
-                    url: `http://localhost:5002/trails-bb944/us-central1/app/uploads/receipt/${userId}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
+                    url: `http://localhost:5001/trails-bb944/us-central1/app/uploads/receipt/${userId}/${Date.now()}-${encodeURIComponent(selectedFile.name)}`, // upload route URL
                     data: fileData,
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
@@ -44,38 +45,47 @@ const AddReceipt = (props) => {
                     gsUrl: uploadReceiptRes.data.gsUrl
                 });
 
+                setReceiptDocId(receiptDoc.id);
+
                 // pass gsUrl to Vision API
                 const receiptProperties = await axios({
                     method: 'post',
-                    url: `http://localhost:5002/trails-bb944/us-central1/app/tester`,
+                    url: `http://localhost:5001/trails-bb944/us-central1/app/tester`,
                     data: {
                         gsUrl: uploadReceiptRes.data.gsUrl,
                     }
                 });
 
-                await props.firebase.setDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(userId, receiptDoc.id), receiptProperties.data);
-
-                setDate(receiptProperties.data.date);
+                
+                setReceiptDate(receiptProperties.data.receiptDate);
                 setTotal(receiptProperties.data.total);
-
+                
                 setConfirm(true);
             }
         } catch (error) {
             console.log(`error: ${error}`)
         }
-
+        
     }
-
+    
     // save expense data to firebase
-    const addExpense = () => {
+    const addExpense = async () => {
         console.log("added expense");
+        await props.firebase.setDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUser().uid, receiptDocId), {
+            total,
+            receiptDate
+        });
+        setConfirm(false);
+        alert('succ');
     }
 
-    const back = () => {
+    const back = async () => {
         // reset state
         setConfirm(false);
         setTotal(null);
-        setDate(null);
+        setReceiptDate(null);
+        await props.firebase.deleteDoc(FIRESTOREPATHS.USER_RECEIPT_DOC_PATH(props.firebase.getCurrentUser().uid, receiptDocId))
+        setReceiptDocId(null);
     }
 
     const confirmForm = (
@@ -83,7 +93,7 @@ const AddReceipt = (props) => {
             <h1>Generated Expense Report</h1>
             <hr />
             <h4>Total: {total}</h4>
-            <h4>Date: {date}</h4>
+            <h4>Date: {new Date(receiptDate * 1000).toDateString()}</h4>
             <button className = "ui button green" onClick = {() => addExpense()}>Confirm Expense</button>
             <button className = "ui button red" onClick = {back}>Back</button>
         </div>

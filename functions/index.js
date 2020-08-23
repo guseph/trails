@@ -122,28 +122,28 @@ app.listen(port, () => {
   console.log(`Server is up and running on port: ${port}`)
 })
 
-process.on('uncaughtException', shutDown);
-process.on('SIGTERM', shutDown);
+// process.on('uncaughtException', shutDown);
+// process.on('SIGTERM', shutDown);
 
-let connections = [];
+// let connections = [];
 
-app.on('connection', connection => {
-    connections.push(connection);
-    connection.on('close', () => connections = connections.filter(curr => curr !== connection));
-});
+// app.on('connection', connection => {
+//     connections.push(connection);
+//     connection.on('close', () => connections = connections.filter(curr => curr !== connection));
+// });
 
-function shutDown() {
-    console.log('Received kill signal, shutting down gracefully');
-    app.close(() => {
-        console.log('Closed out remaining connections');
-        process.exit(0);
-    });
+// function shutDown() {
+//     console.log('Received kill signal, shutting down gracefully');
+//     app.close(() => {
+//         console.log('Closed out remaining connections');
+//         process.exit(0);
+//     });
 
-    setTimeout(() => {
-        console.error('Could not close connections in time, forcefully shutting down');
-        process.exit(1);
-    }, 10000);
+//     setTimeout(() => {
+//         console.error('Could not close connections in time, forcefully shutting down');
+//         process.exit(1);
+//     }, 10000);
 
-    connections.forEach(curr => curr.end());
-    setTimeout(() => connections.forEach(curr => curr.destroy()), 5000);
-}
+//     connections.forEach(curr => curr.end());
+//     setTimeout(() => connections.forEach(curr => curr.destroy()), 5000);
+// }
