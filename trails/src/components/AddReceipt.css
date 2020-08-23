@@ -8,3 +8,13 @@
 #upload-btn{
     margin-top: 1em;
 }
+
+#confirm-form{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.inline.fields{
+    padding-left: 25%;
+}

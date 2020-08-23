@@ -90,12 +90,57 @@ const AddReceipt = (props) => {
         setReceiptDocId(null);
     }
 
+
+    const unixToInputVal = (unix) => {
+        let date = new Date(unix * 1000)
+        var month = (date.getMonth() + 1);               
+        var day = date.getDate();
+        if (month < 10) 
+            month = "0" + month;
+        if (day < 10) 
+            day = "0" + day;
+        var val = date.getFullYear() + '-' + month + '-' + day;
+        return val
+    }
+
+    const inputValToUnix = (val) => {
+        console.log(val);
+        var b = val.split(/\D/);
+        let date =  new Date(b[0], --b[1], b[2]);
+        const unixSeconds = date.getTime() / 1000;
+        return unixSeconds;
+    }
+
     const confirmForm = (
         <div>
             <h1>Generated Expense Report</h1>
             <hr />
-            <h4>Total: {total}</h4>
-            <h4>Date: {new Date(receiptDate * 1000).toDateString()}</h4>
+            <form id = "confirm-form" class="ui form">
+                    <div className = "row">
+                        <div className = "inline fields">
+                            <label>Total</label>
+                            <div className="field">
+                                <input type="number" name="total" value={total} onChange={(e) => setTotal(e.target.value)}></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div className = "row">
+                        <div className = "inline fields">
+                            <label>Date</label>
+                            <div className="field">
+                                <input type="date" name="date" value={unixToInputVal(receiptDate)} onChange={(e) => setReceiptDate(inputValToUnix(e.target.value))}></input>
+                            </div>
+                        </div>
+
+                    </div>
+                
+
+
+            </form>
+    
+            {/* <input type = "text" value = {total} onChange = {(e) => setTotal(e.target.value)}></input> */}
+            {/* <h4>Total: {total}</h4> */}
+            {/* <h4>Date: {new Date(receiptDate * 1000).toDateString()}</h4> */}
             <button className="ui button green" onClick={() => addExpense()}>Confirm Expense</button>
             <button className="ui button red" onClick={back}>Back</button>
         </div>
@@ -112,16 +157,17 @@ const AddReceipt = (props) => {
     )
 
     const spinner = (
-            <div class="ui active inverted dimmer">
-                <div class="ui text loader">Loading</div>
-            </div>
+        <div class="ui active inverted dimmer">
+            <div class="ui text loader">Loading</div>
+        </div>
     )
 
     return (
         <AuthUserContext.Consumer>
             {authUser => (
                 <div>
-                    {confirm ? confirmForm : uploadForm}
+                    {/* {confirm ? confirmForm : uploadForm} */}
+                    {confirmForm}
                     {loading && spinner}
                 </div>
             )}
