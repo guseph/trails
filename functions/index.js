@@ -36,7 +36,7 @@ app.post('/tester', (req, res) => {
   })();
 })
 
-// get all receipts, from most recent to oldest
+// get all receipts, depending on sort methods/direction
 app.get('/api/:userId/userReceipts', (req, res) => {
   (async () => {
     try {
@@ -122,7 +122,7 @@ app.get('/api/:userId/userReceipts/:year/yearStats', (req, res) => {
       const startDate = new Date(req.params.year, 0);
       const endDate = new Date(req.params.year, 11);
       const colPath = db.collection('users').doc(req.params.userId).collection('userReceipts');
-      let response = [0,0]; // [0] is total, [1] is tax, [2] is # receipts
+      let response = [0,0]; // [0] is total, [1] is tax
       await colPath.where('receiptDate', '>=', startDate.getTime()/1000).where('receiptDate', '<=', endDate.getTime()/1000).get()
         .then(snapshot => {
           const docs = snapshot.docs || [];
@@ -142,7 +142,7 @@ app.get('/api/:userId/userReceipts/:year/yearStats', (req, res) => {
 })
 
 // get total spendings, tax, # receipts for a month
-app.get('/api/:userId/userReceipts/:year/:month/monthStats', (req, res) => {
+app.get('/api/:userId/userReceipts/monthStats/:year/:month', (req, res) => {
   (async () => {
     try {
       const startDate = new Date(req.params.year, req.params.month, 1);

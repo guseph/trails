@@ -31,7 +31,7 @@ const MonthView = (props) => {
             while (counter < 6) {
                 const monthStatsRes = await axios({
                     method: 'get',
-                    url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/${currentYear}/${currentMonth}/monthStats`, // upload route URL
+                    url: `http://localhost:5001/trails-bb944/us-central1/app/api/${props.firebase.getCurrentUserId()}/userReceipts/monthStats/${currentYear}/${currentMonth}`, // upload route URL
                 });
                 monthsTemp.push({
                     currentMonth,
